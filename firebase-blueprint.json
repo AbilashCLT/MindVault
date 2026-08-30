@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with personalized workspace settings and role configuration.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique identifier of the user" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "email": { "type": "string", "description": "User email address" },
+        "photoURL": { "type": "string", "description": "Avatar URL" },
+        "role": { "type": "string", "enum": ["admin", "member", "guest"], "description": "Role for authorization" },
+        "createdAt": { "type": "number", "description": "Timestamp of creation" },
+        "updatedAt": { "type": "number", "description": "Timestamp of last update" }
+      },
+      "required": ["uid"]
+    },
+    "ReflectionEntry": {
+      "title": "ReflectionEntry",
+      "description": "A rich reflection, brainstorm, executive summary, action roadmap, or deep probe entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Entry unique ID" },
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "title": { "type": "string", "description": "Title of the entry" },
+        "summary": { "type": "string", "description": "Synthesized executive summary" },
+        "mode": { "type": "string", "enum": ["reflection", "brainstorm", "summary", "action_plan", "deep_dive"], "description": "Interaction mode" },
+        "messages": { "type": "array", "description": "Chat turn history" },
+        "tags": { "type": "array", "description": "Categorization tags" },
+        "moodScore": { "type": "number", "description": "Valence score (-1.0 to 1.0)" },
+        "clarityIndex": { "type": "number", "description": "Clarity index (0 to 100)" },
+        "dominantEmotions": { "type": "array", "description": "Identified emotions" },
+        "actionItems": { "type": "array", "description": "Extracted action items" },
+        "starred": { "type": "boolean", "description": "Whether pinned/starred" },
+        "createdAt": { "type": "number", "description": "Creation timestamp" },
+        "updatedAt": { "type": "number", "description": "Last updated timestamp" }
+      },
+      "required": ["id", "userId", "title", "mode", "createdAt"]
+    },
+    "SecurityEvent": {
+      "title": "SecurityEvent",
+      "description": "Security incident and attack lab telemetry event log.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Incident ID" },
+        "timestamp": { "type": "number", "description": "Timestamp of event" },
+        "scenario": { "type": "string", "description": "Attack scenario type" },
+        "status": { "type": "string", "enum": ["BLOCKED", "LOGGED", "CONTAINED"], "description": "Mitigation status" },
+        "sourceIp": { "type": "string", "description": "Source identifier or simulator origin" },
+        "countermeasure": { "type": "string", "description": "Applied OWASP/Zero-Trust defense" }
+      },
+      "required": ["id", "timestamp", "scenario", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document isolated to the owner."
+    },
+    "/users/{userId}/entries/{entryId}": {
+      "schema": "ReflectionEntry",
+      "description": "Private user journal and reflection entries isolated to the authenticated user."
+    },
+    "/users/{userId}/interactions/{interactionId}": {
+      "schema": "ReflectionEntry",
+      "description": "Legacy and live reflection interactions bound strictly to user UID."
+    },
+    "/system/securityEvents/{eventId}": {
+      "schema": "SecurityEvent",
+      "description": "System-wide security incident telemetry accessible to admin."
+    }
+  }
+}

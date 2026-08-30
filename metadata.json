@@ -1,0 +1,6 @@
+{
+  "name": "Lumina Vault - Mindful Reflection & Cognitive Synthesis",
+  "description": "Enterprise-grade mindful journaling sanctuary powered by Gemini 3.6 Flash. Features voice-transcribed reflections, longitudinal cognitive pattern discovery, grounded RAG vault search, AI clarity digests, and Zero-Trust Firestore security.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
