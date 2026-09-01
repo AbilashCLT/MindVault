@@ -51,6 +51,12 @@ export interface UserSettings {
   privateModeDefault: boolean;
   includeMemoryInPrompts: boolean;
   
+  // External Notifications (Email Mode)
+  notificationEmail?: string;
+  enableEmailDigest: boolean;
+  enableGoalMilestoneAlerts: boolean;
+  enableBreakthroughAlerts: boolean;
+  
   updatedAt: number;
 }
 
@@ -111,6 +117,15 @@ export interface DailyPlan {
   updatedAt: number;
 }
 
+export interface LocationData {
+  placeName: string;
+  formattedAddress?: string;
+  lat: number;
+  lng: number;
+  city?: string;
+  country?: string;
+}
+
 export interface ReflectionEntry {
   id: string;
   userId: string;
@@ -127,6 +142,7 @@ export interface ReflectionEntry {
   dominantEmotions?: string[];
   actionItems?: string[];
   extractedGoals?: Array<{ title: string; category: string; milestones: string[] }>;
+  location?: LocationData;
 }
 
 export interface UserProfile {

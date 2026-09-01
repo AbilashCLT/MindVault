@@ -51,18 +51,18 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-16">
       {/* Header */}
-      <div className="p-6 md:p-8 rounded-2xl bg-[#121214] border border-[#27272A] shadow-xl relative overflow-hidden space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#C0A080] uppercase tracking-wider">
-          <Brain className="w-4 h-4 text-[#C0A080]" />
-          <span>Longitudinal Behavioral & Cognitive Intelligence</span>
+      <div className="p-6 md:p-8 rounded-2xl bg-[#11131C]/80 border border-white/[0.08] shadow-2xl relative overflow-hidden space-y-3 backdrop-blur-xl">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#C4B5FD] uppercase tracking-wider">
+          <Brain className="w-4 h-4 text-[#A78BFA]" />
+          <span>Longitudinal Behavioral & Cognitive Intelligence • MindVault</span>
         </div>
-        <h1 className="text-2xl md:text-3xl font-serif text-[#F4F4F5]">
-          Personal Pattern Finder
+        <h1 className="text-2xl md:text-3xl font-serif text-[#F9FAFB]">
+          Pattern Sanctuary
         </h1>
-        <p className="text-sm text-[#A1A1AA] leading-relaxed">
-          Gemini 3.6 Flash identifies recurring themes, cognitive habits, and emotional trajectories across your journal history.
+        <p className="text-sm text-[#9CA3AF] leading-relaxed">
+          Gemini identifies recurring themes, cognitive habits, and emotional trajectories across your sanctuary reflections.
         </p>
-        <div className="flex items-center justify-between pt-2 border-t border-[#27272A] text-xs text-[#71717A]">
+        <div className="flex items-center justify-between pt-2 border-t border-white/[0.08] text-xs text-[#6B7280]">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-[#34D399]" />
             <span>Analyzing {entries.length} reflections securely</span>
@@ -70,7 +70,7 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
           <button
             onClick={analyzePatterns}
             disabled={isLoading}
-            className="flex items-center gap-1.5 text-[#C0A080] hover:text-[#D4B996] font-medium cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 text-[#C4B5FD] hover:text-[#DDD6FE] font-medium cursor-pointer disabled:opacity-50 transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             <span>{isLoading ? 'Synthesizing...' : 'Re-analyze'}</span>
@@ -84,19 +84,19 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
           patterns.map((pat, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-2xl bg-[#121214] border border-[#27272A] shadow-lg space-y-4 hover:border-[#3F3F46] transition-all"
+              className="p-6 rounded-2xl bg-[#11131C]/80 border border-white/[0.08] shadow-xl space-y-4 hover:border-[#8B5CF6]/30 transition-all backdrop-blur-xl animate-gemini-aura"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#27272A] pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#C0A080]/15 text-[#C0A080] flex items-center justify-center font-bold text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[#8B5CF6]/15 text-[#C4B5FD] flex items-center justify-center font-bold text-xs">
                     0{idx + 1}
                   </div>
                   <div>
-                    <h3 className="text-base font-semibold text-[#F4F4F5]">
+                    <h3 className="text-base font-semibold text-[#F9FAFB]">
                       {pat.theme}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs text-[#71717A]">
-                      <span>Observed across entries</span>
+                    <div className="flex items-center gap-2 text-xs text-[#9CA3AF]">
+                      <span>Observed across reflections</span>
                       <span>•</span>
                       <span className="text-[#34D399] font-medium capitalize">
                         {pat.sentimentTrend} trajectory
@@ -109,7 +109,7 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
                   {(pat.associatedModes || ['reflection']).map((m, mIdx) => (
                     <span
                       key={mIdx}
-                      className="px-2 py-0.5 rounded-full bg-[#18181B] border border-[#27272A] text-[10px] text-[#A1A1AA] capitalize"
+                      className="px-2 py-0.5 rounded-full bg-[#181A28] border border-white/[0.08] text-[10px] text-[#A78BFA] capitalize"
                     >
                       {m.replace('_', ' ')}
                     </span>
@@ -117,12 +117,12 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
                 </div>
               </div>
 
-              <p className="text-sm text-[#D4D4D8] leading-relaxed">
+              <p className="text-sm text-[#E5E7EB] leading-relaxed">
                 {pat.description}
               </p>
 
-              <div className="pt-2 border-t border-[#27272A] flex items-center justify-between">
-                <span className="text-[11px] text-[#71717A]">Cognitive Trajectory Insight</span>
+              <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between">
+                <span className="text-[11px] text-[#6B7280]">Cognitive Trajectory Insight</span>
                 <button
                   onClick={() =>
                     onStartNewReflection(
@@ -130,7 +130,7 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
                       `Let's explore the cognitive pattern '${pat.theme}' that has been recurring in my reflections: ${pat.description}`
                     )
                   }
-                  className="flex items-center gap-1 text-xs text-[#C0A080] hover:text-[#D4B996] font-semibold transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-xs text-[#C4B5FD] hover:text-[#DDD6FE] font-semibold transition-colors cursor-pointer"
                 >
                   <span>Deep Probe this Pattern</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -139,15 +139,15 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
             </div>
           ))
         ) : (
-          <div className="p-8 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-3">
-            <p className="text-sm text-[#A1A1AA]">
+          <div className="p-8 rounded-2xl bg-[#11131C]/80 border border-white/[0.08] text-center space-y-3 backdrop-blur-xl">
+            <p className="text-sm text-[#9CA3AF]">
               Capture at least 2 reflections to generate longitudinal cognitive patterns.
             </p>
             <button
               onClick={() => onStartNewReflection()}
-              className="px-4 py-2 rounded-xl bg-[#C0A080] text-[#0A0A0B] font-semibold text-xs hover:bg-[#D4B996] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#8B5CF6] text-white font-semibold text-xs transition-all shadow-md animate-sanctuary-breathe cursor-pointer"
             >
-              Start New Reflection
+              Start New Thought
             </button>
           </div>
         )}

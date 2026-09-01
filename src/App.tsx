@@ -12,6 +12,7 @@ import { GoalsManagerView } from './components/GoalsManagerView';
 import { DailyPlannerView } from './components/DailyPlannerView';
 import { SettingsPrivacyView } from './components/SettingsPrivacyView';
 import { AIMemoryView } from './components/AIMemoryView';
+import { UserGuideModal } from './components/UserGuideModal';
 import {
   loginWithGoogle,
   loginAsGuest,
@@ -57,6 +58,10 @@ const DEFAULT_USER_SETTINGS: UserSettings = {
   autoSaveIntervalSeconds: 30,
   privateModeDefault: false,
   includeMemoryInPrompts: true,
+  notificationEmail: 'abilashcalicut8@gmail.com',
+  enableEmailDigest: true,
+  enableGoalMilestoneAlerts: true,
+  enableBreakthroughAlerts: true,
   updatedAt: Date.now(),
 };
 
@@ -95,6 +100,7 @@ export default function App() {
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [lastError, setLastError] = useState<string | null>(null);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
+  const [isUserGuideOpen, setIsUserGuideOpen] = useState<boolean>(false);
   const [, startTransition] = useTransition();
 
   // 1. Unified Auth state listener (Firebase & Local Guest)
@@ -279,7 +285,8 @@ export default function App() {
   const handleExportAllData = () => {
     const backupData = {
       exportMetadata: {
-        app: 'GeminiVault',
+        app: 'MindVault',
+        tagline: 'Your thoughts. Your space.',
         exportedAt: new Date().toISOString(),
         userId: currentUser?.uid,
         userEmail: currentUser?.email,
@@ -294,7 +301,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `geminivault_export_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `mindvault_export_${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -306,8 +313,10 @@ export default function App() {
     setAuthLoading(true);
     setLastError(null);
     try {
-      const user = await loginWithGoogle();
-      if (!user) return;
+      const profile = await loginWithGoogle();
+      if (!profile) return;
+      setCurrentUser(profile);
+      setCurrentView('home');
     } catch (err: any) {
       if (err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
         return;
@@ -319,14 +328,16 @@ export default function App() {
     }
   };
 
-  // Handle Guest Sign-In
+  // Handle Guest / Sanctuary Sign-In
   const handleGuestSignIn = async (name?: string) => {
     setAuthLoading(true);
     setLastError(null);
     try {
-      await loginAsGuest(name);
+      const profile = await loginAsGuest(name);
+      setCurrentUser(profile);
+      setCurrentView('home');
     } catch (err: any) {
-      setLastError(err?.message || 'Failed to initialize private workspace.');
+      setLastError(err?.message || 'Failed to initialize private sanctuary.');
       throw err;
     } finally {
       setAuthLoading(false);
@@ -558,6 +569,7 @@ export default function App() {
         onNewEntry={() => handleStartNewReflection()}
         onSignOut={handleSignOut}
         isPrivateSession={isPrivateSession}
+        onOpenGuide={() => setIsUserGuideOpen(true)}
       />
 
       {/* Main App Canvas */}
@@ -566,6 +578,7 @@ export default function App() {
           onGoogleSignIn={handleGoogleSignIn}
           onGuestSignIn={handleGuestSignIn}
           isLoading={authLoading}
+          onOpenGuide={() => setIsUserGuideOpen(true)}
         />
       ) : (
         <main className="flex-1 flex overflow-hidden">
@@ -581,6 +594,7 @@ export default function App() {
                 }}
                 onNavigateToView={(view) => setCurrentView(view)}
                 userDisplayName={currentUser.displayName}
+                onOpenGuide={() => setIsUserGuideOpen(true)}
               />
             </div>
           )}
@@ -734,6 +748,17 @@ export default function App() {
             </div>
           )}
         </main>
+      )}
+
+      {/* Interactive User Guide & Manual Modal */}
+      {isUserGuideOpen && (
+        <UserGuideModal
+          onClose={() => setIsUserGuideOpen(false)}
+          onNavigateToView={(view) => {
+            setIsUserGuideOpen(false);
+            setCurrentView(view);
+          }}
+        />
       )}
     </div>
   );

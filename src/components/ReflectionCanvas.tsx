@@ -20,8 +20,10 @@ import {
   Mic,
   MicOff,
   Square,
+  MapPin,
 } from 'lucide-react';
-import type { ReflectionEntry, ReflectionMode, ChatMessage } from '../types';
+import type { ReflectionEntry, ReflectionMode, ChatMessage, LocationData } from '../types';
+import { LocationTagModal } from './LocationTagModal';
 
 interface ReflectionCanvasProps {
   entry: ReflectionEntry;
@@ -48,7 +50,7 @@ const MODES: Array<{
     label: 'Mindful Reflection',
     tagline: 'Deep introspection, emotional clarity, and thoughtful Socratic inquiries',
     icon: Compass,
-    accent: 'border-[#C0A080] text-[#D4B996] bg-[#C0A080]/15',
+    accent: 'border-[#8B5CF6] text-[#C4B5FD] bg-[#8B5CF6]/15',
     starterPrompts: [
       "Today I felt challenged when...",
       "A pattern I noticed in my reactions this week is...",
@@ -61,7 +63,7 @@ const MODES: Array<{
     label: 'Idea Brainstorming',
     tagline: 'Creative divergence, unique perspectives, and innovative concepts',
     icon: Lightbulb,
-    accent: 'border-[#D97706] text-[#FBBF24] bg-[#D97706]/15',
+    accent: 'border-[#6366F1] text-[#A5B4FC] bg-[#6366F1]/15',
     starterPrompts: [
       "I have an idea for a project that solves...",
       "How might we rethink the way people...",
@@ -74,7 +76,7 @@ const MODES: Array<{
     label: 'Executive Summary',
     tagline: 'Synthesize core takeaways, milestones, and high-level themes',
     icon: FileText,
-    accent: 'border-[#0D9488] text-[#2DD4BF] bg-[#0D9488]/15',
+    accent: 'border-[#06B6D4] text-[#67E8F9] bg-[#06B6D4]/15',
     starterPrompts: [
       "Here is everything that happened in my day: ...",
       "Summarize my notes from today's key meetings: ...",
@@ -87,7 +89,7 @@ const MODES: Array<{
     label: 'Action Roadmap',
     tagline: 'Concrete next steps, milestone priorities, and quick wins',
     icon: ListTodo,
-    accent: 'border-[#059669] text-[#34D399] bg-[#059669]/15',
+    accent: 'border-[#10B981] text-[#6EE7B7] bg-[#10B981]/15',
     starterPrompts: [
       "I need a step-by-step roadmap to achieve...",
       "Help me break down this overwhelming project into 3 phases: ...",
@@ -100,7 +102,7 @@ const MODES: Array<{
     label: 'Deep Analytical Probe',
     tagline: 'First-principles breakdown, root causes, and challenging assumptions',
     icon: Microscope,
-    accent: 'border-[#9333EA] text-[#C084FC] bg-[#9333EA]/15',
+    accent: 'border-[#A855F7] text-[#D8B4FE] bg-[#A855F7]/15',
     starterPrompts: [
       "Deconstruct the root cause of why this issue keeps recurring: ...",
       "What hidden assumptions am I making about...",
@@ -178,6 +180,7 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
   const [newTagInput, setNewTagInput] = useState('');
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   // Voice Note Recording (Web Speech API)
   const [isRecordingVoice, setIsRecordingVoice] = useState(false);
@@ -385,16 +388,16 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
 
   return (
-    <main className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-[#0A0A0B] text-[#F4F4F5] overflow-hidden">
+    <main className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-transparent text-[#F3F4F6] overflow-hidden">
       {/* Top Action & Mode Toolbar */}
-      <div className="bg-[#0E0E10] border-b border-[#27272A] px-4 sm:px-6 py-3 shrink-0">
+      <div className="bg-[#0B0D14]/85 backdrop-blur-xl border-b border-white/[0.08] px-4 sm:px-6 py-3 shrink-0">
         <div className="flex flex-col gap-3">
           {/* Upper row: Mobile toggle + Title + Status */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <button
                 onClick={onToggleSidebarMobile}
-                className="p-1.5 rounded-lg text-[#A1A1AA] hover:text-[#F4F4F5] bg-[#18181B] border border-[#27272A] lg:hidden shrink-0 cursor-pointer"
+                className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#F3F4F6] bg-[#161826] border border-white/[0.08] lg:hidden shrink-0 cursor-pointer"
                 title="Toggle Journal Vault"
               >
                 <Menu className="w-5 h-5" />
@@ -409,11 +412,11 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                     onBlur={handleSaveTitle}
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
                     autoFocus
-                    className="w-full px-2.5 py-1 rounded bg-[#141417] border border-[#C0A080] text-sm font-semibold text-[#F4F4F5] focus:outline-none"
+                    className="w-full px-2.5 py-1 rounded-lg bg-[#161826] border border-[#8B5CF6] text-sm font-semibold text-[#F3F4F6] focus:outline-none"
                   />
                   <button
                     onClick={handleSaveTitle}
-                    className="text-xs px-2.5 py-1 rounded bg-[#C0A080] text-[#0A0A0B] font-semibold cursor-pointer"
+                    className="text-xs px-2.5 py-1 rounded-lg bg-[#8B5CF6] text-white font-semibold cursor-pointer"
                   >
                     Save
                   </button>
@@ -424,10 +427,10 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                   className="group flex items-center gap-2 cursor-pointer truncate"
                   title="Click to rename reflection"
                 >
-                  <h2 className="text-base sm:text-lg font-serif font-semibold text-[#F4F4F5] tracking-wide truncate">
-                    {entry.title || 'Untitled Reflection'}
+                  <h2 className="text-base sm:text-lg font-serif font-semibold text-[#F9FAFB] tracking-wide truncate">
+                    {entry.title || 'Untitled Thought'}
                   </h2>
-                  <span className="text-xs text-[#71717A] group-hover:text-[#C0A080] transition-colors">
+                  <span className="text-xs text-[#6B7280] group-hover:text-[#C4B5FD] transition-colors">
                     ✎
                   </span>
                 </div>
@@ -439,13 +442,13 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
               {saveStatus === 'saving' && (
                 <span className="flex items-center gap-1.5 text-[#FBBF24] font-medium">
                   <span className="w-2 h-2 rounded-full bg-[#FBBF24] animate-pulse" />
-                  Saving to Firestore...
+                  Saving to Vault...
                 </span>
               )}
               {saveStatus === 'saved' && (
                 <span className="flex items-center gap-1.5 text-[#34D399] font-medium">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Persisted to Firestore</span>
+                  <span className="hidden sm:inline">Persisted to Vault</span>
                 </span>
               )}
               {saveStatus === 'error' && (
@@ -470,10 +473,10 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                   key={mode.id}
                   id={`mode-selector-${mode.id}`}
                   onClick={() => handleModeChange(mode.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap border cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all whitespace-nowrap border cursor-pointer ${
                     isActive
-                      ? mode.accent + ' shadow-sm'
-                      : 'bg-[#141417] border-[#27272A] text-[#A1A1AA] hover:text-[#F4F4F5] hover:border-[#3F3F46]'
+                      ? mode.accent + ' shadow-md'
+                      : 'bg-[#121420]/80 border-white/[0.06] text-[#9CA3AF] hover:text-[#F3F4F6] hover:border-white/[0.12]'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -484,17 +487,39 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
           </div>
 
           {/* Mode Tagline & Tags */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#A1A1AA] pt-1 border-t border-[#27272A]/70">
-            <p className="italic text-[#A1A1AA] truncate max-w-lg">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#9CA3AF] pt-1 border-t border-white/[0.06]">
+            <p className="italic text-[#9CA3AF] truncate max-w-lg">
               {activeModeConfig.tagline}
             </p>
 
-            {/* Tag List */}
+            {/* Tag List & Location Tag */}
             <div className="flex items-center gap-1.5 flex-wrap">
+              {/* Location Tag Pill */}
+              {entry.location ? (
+                <button
+                  onClick={() => setShowLocationModal(true)}
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#1E1B4B] text-[#C4B5FD] border border-[#8B5CF6]/40 text-[11px] hover:bg-[#2D286B] transition-colors cursor-pointer"
+                  title="Click to view or edit location"
+                >
+                  <MapPin className="w-3 h-3 text-[#A78BFA]" />
+                  <span className="font-medium">{entry.location.placeName}</span>
+                  {entry.location.city && <span className="text-[#9CA3AF]">({entry.location.city})</span>}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowLocationModal(true)}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#161826] text-[#9CA3AF] hover:text-[#C4B5FD] border border-white/[0.08] hover:border-[#8B5CF6]/40 text-[11px] transition-colors cursor-pointer"
+                  title="Tag location for this reflection"
+                >
+                  <MapPin className="w-3 h-3 text-[#8B5CF6]" />
+                  <span>+ Location</span>
+                </button>
+              )}
+
               {entry.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#18181B] text-[#D4D4D8] border border-[#27272A] text-[11px]"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#161826] text-[#D1D5DB] border border-white/[0.08] text-[11px]"
                 >
                   #{tag}
                   <button
@@ -512,7 +537,7 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                   onChange={(e) => setNewTagInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                   placeholder="+ tag"
-                  className="w-14 px-1.5 py-0.5 rounded bg-[#141417] border border-[#27272A] text-[10px] text-[#D4D4D8] placeholder:text-[#71717A] focus:outline-none focus:border-[#C0A080]/60 focus:w-20 transition-all"
+                  className="w-14 px-1.5 py-0.5 rounded bg-[#161826] border border-white/[0.08] text-[10px] text-[#D1D5DB] placeholder:text-[#6B7280] focus:outline-none focus:border-[#8B5CF6] focus:w-20 transition-all"
                 />
               </div>
             </div>
@@ -524,15 +549,15 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
         {/* If empty entry, show Welcome & Starter Prompts */}
         {entry.messages.length === 0 && (
-          <div className="max-w-2xl mx-auto my-6 p-6 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-4 shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-[#1C1814] border border-[#C0A080]/40 text-[#C0A080] mx-auto flex items-center justify-center">
-              <Sparkles className="w-6 h-6" />
+          <div className="max-w-2xl mx-auto my-6 p-6 rounded-2xl bg-[#11131C]/75 border border-white/[0.08] text-center space-y-4 shadow-2xl backdrop-blur-xl">
+            <div className="w-12 h-12 rounded-2xl bg-[#1E1B4B] border border-[#8B5CF6]/40 text-[#C4B5FD] mx-auto flex items-center justify-center shadow-lg shadow-[#8B5CF6]/15">
+              <Sparkles className="w-6 h-6 text-[#A78BFA]" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-serif font-semibold text-[#F4F4F5]">
+              <h3 className="text-base sm:text-lg font-serif font-semibold text-[#F9FAFB]">
                 Start your {activeModeConfig.label}
               </h3>
-              <p className="text-xs sm:text-sm text-[#A1A1AA] mt-1 max-w-md mx-auto">
+              <p className="text-xs sm:text-sm text-[#9CA3AF] mt-1 max-w-md mx-auto">
                 Type your thoughts freely below, or choose one of these guiding prompts to begin:
               </p>
             </div>
@@ -545,9 +570,9 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                     setInputText(prompt);
                     textareaRef.current?.focus();
                   }}
-                  className="p-3 rounded-xl bg-[#141417] border border-[#27272A] hover:border-[#C0A080]/50 hover:bg-[#1A1A1E] text-xs text-[#D4D4D8] hover:text-[#F4F4F5] transition-all text-left group flex items-start gap-2 cursor-pointer"
+                  className="p-3 rounded-xl bg-[#161826]/80 border border-white/[0.08] hover:border-[#8B5CF6]/50 hover:bg-[#1E2235] text-xs text-[#D1D5DB] hover:text-[#F3F4F6] transition-all text-left group flex items-start gap-2 cursor-pointer"
                 >
-                  <span className="text-[#C0A080] group-hover:translate-x-0.5 transition-transform shrink-0 mt-0.5">
+                  <span className="text-[#A78BFA] group-hover:translate-x-0.5 transition-transform shrink-0 mt-0.5">
                     →
                   </span>
                   <span>{prompt}</span>
@@ -568,21 +593,21 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
               }`}
             >
               {/* Sender label and details */}
-              <div className="flex items-center gap-2 mb-1.5 px-1 text-[11px] text-[#71717A]">
+              <div className="flex items-center gap-2 mb-1.5 px-1 text-[11px] text-[#6B7280]">
                 {isUser ? (
                   <>
-                    <span className="text-[#D4B996] font-medium">You</span>
+                    <span className="text-[#C4B5FD] font-medium">You</span>
                     <span>•</span>
-                    <Clock className="w-3 h-3 text-[#71717A]" />
+                    <Clock className="w-3 h-3 text-[#6B7280]" />
                     <span>{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </>
                 ) : (
                   <>
-                    <div className="w-4 h-4 rounded-md bg-[#C0A080]/20 text-[#C0A080] flex items-center justify-center font-bold text-[10px]">
+                    <div className="w-4 h-4 rounded-md bg-[#8B5CF6]/20 text-[#C4B5FD] flex items-center justify-center font-bold text-[10px]">
                       ✦
                     </div>
-                    <span className="font-medium text-[#D4B996]">{activeMeta.companionTitle}</span>
-                    <span className="px-1.5 py-0.2 rounded bg-[#18181B] text-[10px] text-[#A1A1AA] border border-[#27272A]">
+                    <span className="font-medium text-[#C4B5FD]">{activeMeta.companionTitle}</span>
+                    <span className="px-1.5 py-0.2 rounded bg-[#161826] text-[10px] text-[#9CA3AF] border border-white/[0.08]">
                       {message.modelUsed || activeModelName || 'Gemini 3.6 Flash'}
                     </span>
                     <span>•</span>
@@ -591,33 +616,33 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                 )}
               </div>
 
-              {/* Message Bubble */}
+              {/* Message Bubble with soft ambient glow on AI messages */}
               <div
-                className={`relative group rounded-2xl p-4 sm:p-5 text-sm leading-relaxed transition-all shadow-sm ${
+                className={`relative group rounded-2xl p-4 sm:p-5 text-sm leading-relaxed transition-all shadow-md ${
                   isUser
-                    ? 'bg-[#1E1A16] border border-[#C0A080]/30 text-[#F4F4F5] rounded-tr-sm'
-                    : 'bg-[#121214] border border-[#27272A] text-[#E4E4E7] rounded-tl-sm w-full shadow-lg'
+                    ? 'bg-gradient-to-br from-[#1E1B4B]/90 to-[#181635]/90 border border-[#8B5CF6]/30 text-[#F9FAFB] rounded-tr-sm'
+                    : 'bg-[#11131C]/85 border border-[#8B5CF6]/20 text-[#E5E7EB] rounded-tl-sm w-full shadow-xl backdrop-blur-md animate-gemini-aura'
                 }`}
               >
                 {isUser ? (
                   <p className="whitespace-pre-wrap">{message.text}</p>
                 ) : (
-                  <div className="markdown-body space-y-3 text-[#E4E4E7]">
+                  <div className="markdown-body space-y-3 text-[#E5E7EB]">
                     <ReactMarkdown
                       components={{
-                        h1: ({ children }) => <h1 className="text-lg font-serif font-semibold text-[#F4F4F5] mt-2 mb-1 border-b border-[#27272A] pb-1">{children}</h1>,
-                        h2: ({ children }) => <h2 className="text-base font-serif font-medium text-[#D4B996] mt-2 mb-1">{children}</h2>,
-                        h3: ({ children }) => <h3 className="text-xs font-semibold text-[#F4F4F5] uppercase tracking-wider mt-1 mb-0.5">{children}</h3>,
-                        ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 my-1 text-[#D4D4D8]">{children}</ul>,
-                        ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 my-1 text-[#D4D4D8]">{children}</ol>,
-                        li: ({ children }) => <li className="text-[#D4D4D8] text-xs sm:text-sm">{children}</li>,
+                        h1: ({ children }) => <h1 className="text-lg font-serif font-semibold text-[#F9FAFB] mt-2 mb-1 border-b border-white/[0.08] pb-1">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-base font-serif font-medium text-[#C4B5FD] mt-2 mb-1">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-xs font-semibold text-[#F9FAFB] uppercase tracking-wider mt-1 mb-0.5">{children}</h3>,
+                        ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 my-1 text-[#D1D5DB]">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 my-1 text-[#D1D5DB]">{children}</ol>,
+                        li: ({ children }) => <li className="text-[#D1D5DB] text-xs sm:text-sm">{children}</li>,
                         blockquote: ({ children }) => (
-                          <blockquote className="border-l-2 border-[#C0A080] pl-3 py-1 my-2 italic text-[#A1A1AA] text-xs bg-[#161412]/50 rounded-r">
+                          <blockquote className="border-l-2 border-[#8B5CF6] pl-3 py-1 my-2 italic text-[#9CA3AF] text-xs bg-[#161828]/50 rounded-r">
                             {children}
                           </blockquote>
                         ),
-                        p: ({ children }) => <p className="mb-2 last:mb-0 text-[#E4E4E7] leading-relaxed">{children}</p>,
-                        strong: ({ children }) => <strong className="font-semibold text-[#F4F4F5]">{children}</strong>,
+                        p: ({ children }) => <p className="mb-2 last:mb-0 text-[#E5E7EB] leading-relaxed">{children}</p>,
+                        strong: ({ children }) => <strong className="font-semibold text-[#F9FAFB]">{children}</strong>,
                       }}
                     >
                       {message.text}
@@ -630,8 +655,8 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                   onClick={() => handleCopyText(message.id, message.text)}
                   className={`absolute bottom-2 right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all cursor-pointer ${
                     isUser
-                      ? 'bg-[#2A231C] hover:bg-[#382E24] text-[#D4B996]'
-                      : 'bg-[#18181B] hover:bg-[#27272A] text-[#A1A1AA]'
+                      ? 'bg-[#2A2450] hover:bg-[#382F66] text-[#C4B5FD]'
+                      : 'bg-[#181A28] hover:bg-[#24283D] text-[#9CA3AF]'
                   }`}
                   title="Copy text"
                 >
@@ -649,23 +674,23 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
         {/* Loading / Generating State */}
         {isGenerating && (
           <div className="flex flex-col items-start max-w-3xl mr-auto space-y-2">
-            <div className="flex items-center gap-2 text-xs text-[#C0A080]">
-              <Sparkles className="w-4 h-4 animate-spin text-[#C0A080]" />
+            <div className="flex items-center gap-2 text-xs text-[#A78BFA]">
+              <Sparkles className="w-4 h-4 animate-spin text-[#A78BFA]" />
               <span className="font-medium tracking-wide transition-opacity duration-300">
                 {activeMeta.loadingMessages[loadingMessageIndex]}
               </span>
             </div>
-            <div className="w-full p-4 rounded-2xl bg-[#121214] border border-[#27272A] rounded-tl-sm space-y-2 animate-pulse">
-              <div className="h-3 bg-[#18181B] rounded w-3/4"></div>
-              <div className="h-3 bg-[#18181B] rounded w-5/6"></div>
-              <div className="h-3 bg-[#18181B] rounded w-1/2"></div>
+            <div className="w-full p-4 rounded-2xl bg-[#11131C]/75 border border-white/[0.08] rounded-tl-sm space-y-2 animate-pulse">
+              <div className="h-3 bg-[#181A28] rounded w-3/4"></div>
+              <div className="h-3 bg-[#181A28] rounded w-5/6"></div>
+              <div className="h-3 bg-[#181A28] rounded w-1/2"></div>
             </div>
           </div>
         )}
 
         {/* Error Alert with Retry button */}
         {lastError && (
-          <div className="max-w-3xl mx-auto p-4 rounded-xl bg-[#2A1418] border border-[#7F1D1D] text-[#FDA4AF] text-xs flex items-center justify-between gap-3">
+          <div className="max-w-3xl mx-auto p-4 rounded-xl bg-[#2D1219] border border-[#7F1D1D] text-[#FDA4AF] text-xs flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-[#FB7185] shrink-0" />
               <span>{lastError}</span>
@@ -684,16 +709,16 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
       </div>
 
       {/* Input Composer Box */}
-      <div className="bg-[#0E0E10] border-t border-[#27272A] p-3 sm:p-4 shrink-0">
+      <div className="bg-[#0B0D14]/85 backdrop-blur-xl border-t border-white/[0.08] p-3 sm:p-4 shrink-0">
         <div className="max-w-4xl mx-auto space-y-2">
           {/* Live Voice Transcribing Indicator */}
           {isRecordingVoice && (
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#1C1414] border border-[#EF4444]/40 text-xs text-[#FCA5A5] animate-pulse">
+            <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#2D1219] border border-[#EF4444]/40 text-xs text-[#FCA5A5] animate-pulse">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] animate-ping" />
                 <span className="font-medium text-white">Listening to voice note...</span>
                 {voiceInterimText && (
-                  <span className="italic text-[#E4E4E7] truncate max-w-xs sm:max-w-md">"{voiceInterimText}"</span>
+                  <span className="italic text-[#E5E7EB] truncate max-w-xs sm:max-w-md">"{voiceInterimText}"</span>
                 )}
               </div>
               <button
@@ -707,16 +732,16 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
           )}
 
           {/* Textarea container */}
-          <div className="relative rounded-2xl bg-[#141417] border border-[#27272A] focus-within:border-[#C0A080]/70 focus-within:ring-1 focus-within:ring-[#C0A080]/30 transition-all shadow-inner">
+          <div className="relative rounded-2xl bg-[#131522] border border-white/[0.08] focus-within:border-[#8B5CF6] focus-within:ring-1 focus-within:ring-[#8B5CF6]/40 transition-all shadow-inner">
             <textarea
               id="reflection-composer-textarea"
               ref={textareaRef}
               value={inputText}
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
-              placeholder={`Write or record your ${activeModeConfig.label.toLowerCase()} here... (Press Cmd/Ctrl + Enter to send)`}
+              placeholder={`Write or speak your thoughts freely in this sanctuary... (Press Cmd/Ctrl + Enter to send)`}
               rows={2}
-              className="w-full p-3.5 pr-24 text-sm text-[#F4F4F5] bg-transparent resize-none focus:outline-none placeholder:text-[#71717A] max-h-60"
+              className="w-full p-3.5 pr-24 text-sm text-[#F3F4F6] bg-transparent resize-none focus:outline-none placeholder:text-[#6B7280] max-h-60"
             />
 
             {/* Action Buttons Right Side: Mic + Send */}
@@ -729,14 +754,14 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                 className={`p-2.5 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer ${
                   isRecordingVoice
                     ? 'bg-[#EF4444] text-white animate-bounce shadow-[#EF4444]/30'
-                    : 'bg-[#1E1E22] hover:bg-[#27272A] text-[#A1A1AA] hover:text-[#F4F4F5] border border-[#27272A]'
+                    : 'bg-[#181A28] hover:bg-[#24283D] text-[#9CA3AF] hover:text-[#F3F4F6] border border-white/[0.08]'
                 }`}
                 title={isRecordingVoice ? 'Stop recording voice note' : 'Record voice note (Web Speech API)'}
               >
                 {isRecordingVoice ? (
                   <Square className="w-4 h-4 text-white" />
                 ) : (
-                  <Mic className="w-4 h-4 text-[#C0A080]" />
+                  <Mic className="w-4 h-4 text-[#A78BFA]" />
                 )}
               </button>
 
@@ -745,37 +770,52 @@ export const ReflectionCanvas: React.FC<ReflectionCanvasProps> = ({
                 id="reflection-send-btn"
                 onClick={handleSend}
                 disabled={!inputText.trim() || isGenerating}
-                className="p-2.5 rounded-xl bg-[#C0A080] hover:bg-[#D4B996] text-[#0A0A0B] disabled:opacity-30 disabled:hover:bg-[#C0A080] transition-all shadow-md shadow-[#C0A080]/20 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+                className="p-2.5 rounded-xl bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#8B5CF6] hover:from-[#8B5CF6] hover:to-[#A78BFA] text-white disabled:opacity-30 transition-all shadow-md active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:animate-none animate-sanctuary-breathe"
                 title="Send to Gemini (Cmd+Enter)"
               >
-                <Send className="w-4 h-4 text-[#0A0A0B]" />
+                <Send className="w-4 h-4 text-white" />
               </button>
             </div>
           </div>
 
           {/* Footer details: counts, voice state, shortcut, security note */}
-          <div className="flex items-center justify-between px-2 text-[11px] text-[#71717A]">
+          <div className="flex items-center justify-between px-2 text-[11px] text-[#6B7280]">
             <div className="flex items-center gap-3">
               <span>{wordCount} words</span>
               <span>•</span>
-              <span className="hidden sm:inline">Press <kbd className="px-1 py-0.5 rounded bg-[#18181B] text-[#D4D4D8] border border-[#27272A] font-mono text-[10px]">Cmd+Enter</kbd> to submit</span>
+              <span className="hidden sm:inline">Press <kbd className="px-1 py-0.5 rounded bg-[#161826] text-[#D1D5DB] border border-white/[0.08] font-mono text-[10px]">Cmd+Enter</kbd> to submit</span>
               {speechRecognitionSupported && (
                 <>
                   <span className="hidden sm:inline">•</span>
-                  <span className="hidden sm:flex items-center gap-1 text-[#C0A080]">
+                  <span className="hidden sm:flex items-center gap-1 text-[#C4B5FD]">
                     <Mic className="w-3 h-3" /> Voice transcription ready
                   </span>
                 </>
               )}
             </div>
 
-            <div className="flex items-center gap-1.5 text-[#71717A]">
+            <div className="flex items-center gap-1.5 text-[#6B7280]">
               <ShieldCheck className="w-3.5 h-3.5 text-[#34D399]" />
               <span>Isolated in Firestore under your UID</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Location Tagging Modal */}
+      {showLocationModal && (
+        <LocationTagModal
+          currentLocation={entry.location}
+          onSaveLocation={async (loc) => {
+            await onUpdateEntry({
+              ...entry,
+              location: loc,
+              updatedAt: Date.now(),
+            });
+          }}
+          onClose={() => setShowLocationModal(false)}
+        />
+      )}
     </main>
   );
 };

@@ -10,19 +10,22 @@ import {
   ArrowRight,
   Database,
   KeyRound,
-  Compass
+  Compass,
+  BookOpen
 } from 'lucide-react';
 
 interface LandingViewProps {
   onGoogleSignIn: () => Promise<void>;
   onGuestSignIn: (name?: string) => Promise<void>;
   isLoading: boolean;
+  onOpenGuide?: () => void;
 }
 
 export const LandingView: React.FC<LandingViewProps> = ({
   onGoogleSignIn,
   onGuestSignIn,
   isLoading,
+  onOpenGuide,
 }) => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
@@ -39,7 +42,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
         err?.code === 'auth/cancelled-popup-request' ||
         err?.message?.includes('popup-closed-by-user')
       ) {
-        // User closed or dismissed the popup (often after encountering 403 on Google's consent screen)
         setAuthError('Google Sign-In was closed. If you encountered "Error 403: restricted_client" on Google\'s screen, use Private Workspace Access below to enter immediately.');
         return;
       }
@@ -53,47 +55,59 @@ export const LandingView: React.FC<LandingViewProps> = ({
       setIsGuestLoading(true);
       await onGuestSignIn(customName.trim() || undefined);
     } catch (err: any) {
-      setAuthError(err?.message || 'Workspace initialization encountered an issue.');
+      setAuthError(err?.message || 'Sanctuary initialization encountered an issue.');
     } finally {
       setIsGuestLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-between bg-[#0A0A0B] text-[#F4F4F5]">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-between text-[#F3F4F6]">
       {/* Hero Section */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 text-center">
-        {/* Top pill badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#181614] border border-[#C0A080]/30 text-[#D4B996] text-xs font-medium mb-6 shadow-sm">
-          <Sparkles className="w-3.5 h-3.5 text-[#C0A080]" />
-          <span>Powered by Gemini 3.6 Flash & Cloud Firestore</span>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 text-center">
+        {/* Digital Sanctuary Top Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#181A28]/80 border border-[#8B5CF6]/30 text-[#C4B5FD] text-xs font-medium mb-8 shadow-lg shadow-[#8B5CF6]/10 backdrop-blur-md">
+          <Sparkles className="w-3.5 h-3.5 text-[#A78BFA]" />
+          <span>MindVault • Digital Sanctuary for Mindful Reflection</span>
         </div>
 
-        {/* Title */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal tracking-tight text-[#F4F4F5] max-w-3xl mx-auto leading-tight">
-          Your Private Journal & Guided Reflection Sanctuary
+        {/* Large Brand Typography */}
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-normal tracking-tight text-[#F9FAFB] max-w-3xl mx-auto leading-[1.15]">
+          Your thoughts. <span className="italic text-[#C4B5FD]">Your space.</span>
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-6 text-base sm:text-lg text-[#A1A1AA] max-w-2xl mx-auto font-normal leading-relaxed">
-          Express your thoughts freely and engage in multi-turn dialogues with Gemini. All reflections are securely isolated and persisted in your private Cloud Firestore vault.
+        <p className="mt-6 text-lg sm:text-xl text-[#9CA3AF] max-w-2xl mx-auto font-normal leading-relaxed">
+          A serene digital sanctuary for quiet contemplation, deep Socratic dialogues, and cognitive growth — completely private, isolated, and encrypted.
         </p>
 
-        {/* Auth CTA Box */}
-        <div className="mt-10 max-w-md mx-auto p-6 rounded-2xl bg-[#121214] border border-[#27272A] shadow-2xl backdrop-blur-xl space-y-3.5">
-          {/* Primary Instant Access Button */}
+        {onOpenGuide && (
+          <div className="mt-4 flex items-center justify-center">
+            <button
+              onClick={onOpenGuide}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#1E1B4B]/70 hover:bg-[#2D286B] border border-[#8B5CF6]/30 text-[#C4B5FD] hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-sm"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#A78BFA]" />
+              <span>Explore User Guide & Features</span>
+            </button>
+          </div>
+        )}
+
+        {/* Auth CTA Box - Glass-like card with soft blue-violet glow and breathing aura */}
+        <div className="mt-10 max-w-md mx-auto p-7 rounded-2xl bg-[#11131C]/85 border border-[#8B5CF6]/20 shadow-2xl backdrop-blur-xl space-y-4 animate-gemini-aura">
+          {/* Primary Instant Access Button with Breathing Animation */}
           <button
             id="workspace-signin-btn"
             onClick={handleGuestSignIn}
             disabled={isLoading || isGuestLoading}
-            className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-[#C0A080] hover:bg-[#D4B996] text-[#0A0A0B] font-semibold text-base transition-all shadow-lg shadow-[#C0A080]/15 hover:shadow-[#C0A080]/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#8B5CF6] hover:from-[#8B5CF6] hover:to-[#A78BFA] text-white font-semibold text-base transition-all shadow-lg animate-sanctuary-breathe active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isGuestLoading ? (
-              <div className="w-5 h-5 border-2 border-[#0A0A0B] border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <KeyRound className="w-5 h-5 text-[#0A0A0B]" />
+              <KeyRound className="w-5 h-5 text-white" />
             )}
-            <span>{isGuestLoading ? 'Initializing Private Workspace...' : 'Enter Private Workspace'}</span>
+            <span>{isGuestLoading ? 'Entering Sanctuary...' : 'Enter Private Sanctuary'}</span>
           </button>
 
           {/* Optional Name Personalization */}
@@ -102,9 +116,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowCustomNameInput(true)}
-                className="text-xs text-[#A1A1AA] hover:text-[#C0A080] transition-colors underline underline-offset-2 cursor-pointer"
+                className="text-xs text-[#9CA3AF] hover:text-[#C4B5FD] transition-colors underline underline-offset-2 cursor-pointer"
               >
-                Personalize workspace name (optional)
+                Personalize sanctuary name (optional)
               </button>
             </div>
           ) : (
@@ -114,13 +128,13 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
                 placeholder="e.g. Abilash"
-                className="flex-1 px-3 py-1.5 rounded-lg bg-[#18181B] border border-[#3F3F46] text-[#F4F4F5] text-xs focus:outline-none focus:border-[#C0A080]"
+                className="flex-1 px-3 py-1.5 rounded-lg bg-[#181A28] border border-white/[0.12] text-[#F3F4F6] text-xs focus:outline-none focus:border-[#8B5CF6]"
               />
               <button
                 type="button"
                 onClick={handleGuestSignIn}
                 disabled={isGuestLoading}
-                className="px-3 py-1.5 rounded-lg bg-[#27272A] hover:bg-[#3F3F46] text-[#E4E4E7] text-xs font-medium cursor-pointer"
+                className="px-3 py-1.5 rounded-lg bg-[#24283D] hover:bg-[#313652] text-[#E5E7EB] text-xs font-medium cursor-pointer"
               >
                 Set & Enter
               </button>
@@ -128,9 +142,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
           )}
 
           <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-[#27272A]"></div>
-            <span className="flex-shrink mx-3 text-[10px] text-[#71717A] uppercase tracking-wider font-semibold">or Cloud OAuth</span>
-            <div className="flex-grow border-t border-[#27272A]"></div>
+            <div className="flex-grow border-t border-white/[0.08]"></div>
+            <span className="flex-shrink mx-3 text-[10px] text-[#6B7280] uppercase tracking-wider font-semibold">or Cloud OAuth</span>
+            <div className="flex-grow border-t border-white/[0.08]"></div>
           </div>
 
           {/* Google Sign-in Button */}
@@ -138,10 +152,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
             id="google-signin-btn"
             onClick={handleSignIn}
             disabled={isLoading || isGuestLoading}
-            className="w-full flex items-center justify-center gap-3 px-5 py-2.5 rounded-xl bg-[#18181B] hover:bg-[#27272A] border border-[#27272A] hover:border-[#3F3F46] text-[#E4E4E7] font-medium text-sm transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 px-5 py-2.5 rounded-xl bg-[#161826] hover:bg-[#1E2235] border border-white/[0.08] hover:border-white/[0.15] text-[#E5E7EB] font-medium text-sm transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? (
-              <div className="w-4 h-4 border-2 border-[#C0A080] border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#8B5CF6] border-t-transparent rounded-full animate-spin" />
             ) : (
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -166,7 +180,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
           </button>
 
           {authError && (
-            <div className="mt-4 p-3.5 rounded-xl bg-[#2A1418] border border-[#7F1D1D] text-[#FDA4AF] text-xs text-left space-y-2">
+            <div className="mt-4 p-3.5 rounded-xl bg-[#2D1219] border border-[#7F1D1D] text-[#FDA4AF] text-xs text-left space-y-2">
               <p className="font-semibold text-[#FECDD3]">Authentication Notice:</p>
               <p className="leading-relaxed">{authError}</p>
               <div className="pt-2 border-t border-[#7F1D1D]/60 flex items-center justify-between gap-2">
@@ -175,83 +189,83 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 </span>
                 <button
                   onClick={handleGuestSignIn}
-                  className="px-2.5 py-1 rounded bg-[#C0A080] text-[#0A0A0B] font-semibold text-[11px] hover:bg-[#D4B996] transition-colors cursor-pointer shrink-0"
+                  className="px-2.5 py-1 rounded bg-[#8B5CF6] text-white font-semibold text-[11px] hover:bg-[#7C3AED] transition-colors cursor-pointer shrink-0"
                 >
-                  Enter Workspace →
+                  Enter Sanctuary →
                 </button>
               </div>
             </div>
           )}
 
-          <div className="mt-4 flex items-center justify-center gap-2 text-xs text-[#A1A1AA]">
+          <div className="mt-4 flex items-center justify-center gap-2 text-xs text-[#9CA3AF]">
             <Lock className="w-3.5 h-3.5 text-[#34D399]" />
-            <span>Encrypted Vault • Zero Stored Passwords • Full Gemini 3.6 Flash</span>
+            <span>Zero-Knowledge Encryption • Zero Stored Passwords • Full Gemini 3.6 Flash</span>
           </div>
         </div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid - Digital Sanctuary Glass Cards */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-5xl mx-auto">
           {/* Card 1 */}
-          <div className="p-6 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-[#C0A080]/40 transition-colors">
-            <div className="w-12 h-12 rounded-xl bg-[#1C1814] border border-[#C0A080]/30 flex items-center justify-center text-[#C0A080] mb-4">
-              <BrainCircuit className="w-6 h-6" />
+          <div className="p-6 rounded-2xl bg-[#11131C]/60 border border-white/[0.07] hover:border-[#8B5CF6]/40 transition-all backdrop-blur-md">
+            <div className="w-11 h-11 rounded-xl bg-[#1E1B4B] border border-[#8B5CF6]/30 flex items-center justify-center text-[#C4B5FD] mb-4 shadow-md shadow-[#8B5CF6]/10">
+              <BrainCircuit className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-[#F4F4F5] mb-2 font-serif">Multi-Turn Gemini Dialogue</h3>
-            <p className="text-sm text-[#A1A1AA] leading-relaxed">
-              Have intelligent, empathetic conversations about your daily reflections, plans, emotional challenges, or brainstorming goals.
+            <h3 className="text-lg font-serif font-medium text-[#F3F4F6] mb-2">Socratic Multi-Turn Dialogue</h3>
+            <p className="text-sm text-[#9CA3AF] leading-relaxed">
+              Explore your thoughts with a respectful, intelligent companion that probes assumptions without judgment.
             </p>
           </div>
 
           {/* Card 2 */}
-          <div className="p-6 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-[#C0A080]/40 transition-colors">
-            <div className="w-12 h-12 rounded-xl bg-[#141E1C] border border-[#34D399]/30 flex items-center justify-center text-[#34D399] mb-4">
-              <Database className="w-6 h-6" />
+          <div className="p-6 rounded-2xl bg-[#11131C]/60 border border-white/[0.07] hover:border-[#8B5CF6]/40 transition-all backdrop-blur-md">
+            <div className="w-11 h-11 rounded-xl bg-[#132822] border border-[#34D399]/30 flex items-center justify-center text-[#34D399] mb-4 shadow-md shadow-[#34D399]/10">
+              <Database className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-[#F4F4F5] mb-2 font-serif">User-Isolated Firestore</h3>
-            <p className="text-sm text-[#A1A1AA] leading-relaxed">
-              Every journal entry is securely stored under your authenticated UID. Security rules prevent cross-tenant reads and unauthorized writes.
+            <h3 className="text-lg font-serif font-medium text-[#F3F4F6] mb-2">User-Isolated Firestore Vault</h3>
+            <p className="text-sm text-[#9CA3AF] leading-relaxed">
+              Every thought, goal, and memory is strictly owner-bound under your UID. Cross-tenant reads are cryptographically rejected.
             </p>
           </div>
 
           {/* Card 3 */}
-          <div className="p-6 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-[#C0A080]/40 transition-colors">
-            <div className="w-12 h-12 rounded-xl bg-[#1C1814] border border-[#D4B996]/30 flex items-center justify-center text-[#D4B996] mb-4">
-              <Compass className="w-6 h-6" />
+          <div className="p-6 rounded-2xl bg-[#11131C]/60 border border-white/[0.07] hover:border-[#8B5CF6]/40 transition-all backdrop-blur-md">
+            <div className="w-11 h-11 rounded-xl bg-[#241A38] border border-[#A78BFA]/30 flex items-center justify-center text-[#C4B5FD] mb-4 shadow-md shadow-[#8B5CF6]/10">
+              <Compass className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-[#F4F4F5] mb-2 font-serif">5 Specialized Modes</h3>
-            <p className="text-sm text-[#A1A1AA] leading-relaxed">
-              Switch seamlessly between Socratic Inquiries, Creative Brainstorms, Executive Summaries, Action Roadmaps, and Analytical Deep-Dives.
+            <h3 className="text-lg font-serif font-medium text-[#F3F4F6] mb-2">5 Cognitive Frameworks</h3>
+            <p className="text-sm text-[#9CA3AF] leading-relaxed">
+              Seamlessly switch between Mindful Reflection, Creative Ideation, Action Roadmaps, Executive Summaries, and Deep Probes.
             </p>
           </div>
         </div>
 
         {/* Security & Architecture Highlights */}
-        <div className="mt-12 p-6 rounded-2xl bg-gradient-to-r from-[#121214] via-[#161412] to-[#121214] border border-[#27272A] max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-left">
+        <div className="mt-12 p-6 rounded-2xl bg-gradient-to-r from-[#11131C]/90 via-[#161828]/90 to-[#11131C]/90 border border-white/[0.08] max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-left backdrop-blur-md">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-lg bg-[#141E1C] border border-[#34D399]/40 flex items-center justify-center text-[#34D399] shrink-0">
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-[#F4F4F5]">Enterprise Security Hygiene</h4>
-              <p className="text-xs text-[#A1A1AA]">
-                Server-side API proxying with fallback ladder, Secret Manager key encapsulation, and strict Firestore owner bounds.
+              <h4 className="text-sm font-semibold text-[#F3F4F6]">Digital Sanctuary Security Hygiene</h4>
+              <p className="text-xs text-[#9CA3AF]">
+                Server-side Gemini proxying with resilient fallback ladder, Secret Manager encapsulation, and strict Firestore owner bounds.
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-[#D4D4D8] shrink-0">
+          <div className="flex items-center gap-4 text-xs text-[#D1D5DB] shrink-0">
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#34D399]" /> OWASP Mitigations
+              <CheckCircle2 className="w-4 h-4 text-[#34D399]" /> OWASP Standard
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#C0A080]" /> Resilient AI Fallback
+              <CheckCircle2 className="w-4 h-4 text-[#A78BFA]" /> Gemini Resilient Fallback
             </span>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-[#27272A] py-6 text-center text-xs text-[#71717A]">
-        <p>Lumina Vault • Mindful Reflection & Cognitive Synthesis Sanctuary • Powered by Gemini 3.6 Flash & Cloud Firestore</p>
+      <footer className="border-t border-white/[0.06] py-6 text-center text-xs text-[#6B7280]">
+        <p>MindVault • Your thoughts. Your space. • Powered by Gemini 3.6 Flash & Cloud Firestore</p>
       </footer>
     </div>
   );

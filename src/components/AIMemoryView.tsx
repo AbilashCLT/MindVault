@@ -38,7 +38,7 @@ const CATEGORIES: Array<{
   icon: any;
   color: string;
 }> = [
-  { id: 'all', label: 'All Insights', icon: Brain, color: '#C0A080' },
+  { id: 'all', label: 'All Insights', icon: Brain, color: '#A78BFA' },
   { id: 'Core Value', label: 'Core Values', icon: Heart, color: '#F43F5E' },
   { id: 'Recurring Pattern', label: 'Recurring Patterns', icon: RefreshCw, color: '#8B5CF6' },
   { id: 'Growth Goal', label: 'Growth Goals', icon: Target, color: '#10B981' },
@@ -188,23 +188,25 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
 
   const getCategoryColor = (cat: AIMemoryItem['category']) => {
     const found = CATEGORIES.find((c) => c.id === cat);
-    return found ? found.color : '#C0A080';
+    return found ? found.color : '#8B5CF6';
   };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-20">
       {/* Header Banner */}
-      <div className="p-6 md:p-8 rounded-2xl bg-[#121214] border border-[#27272A] shadow-xl relative overflow-hidden">
+      <div className="p-6 md:p-8 rounded-2xl bg-[#11131C]/80 border border-white/[0.08] shadow-2xl relative overflow-hidden backdrop-blur-xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#8B5CF6]/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#C0A080] uppercase tracking-wider">
-              <Brain className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#C4B5FD] uppercase tracking-wider">
+              <Brain className="w-3.5 h-3.5 text-[#A78BFA]" />
               <span>Cognitive Profile & Long-Term Memory</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-serif text-[#F4F4F5]">
+            <h1 className="text-2xl md:text-3xl font-serif text-[#F9FAFB]">
               AI Memory Bank
             </h1>
-            <p className="text-xs md:text-sm text-[#A1A1AA] max-w-2xl">
+            <p className="text-xs md:text-sm text-[#9CA3AF] max-w-2xl">
               Everything Gemini has synthesized and remembered across your reflections: your core values, behavioral patterns, growth intentions, and communication preferences.
             </p>
           </div>
@@ -213,32 +215,32 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => handleOpenAddModal()}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#C0A080] hover:bg-[#D4B996] text-[#0A0A0B] text-xs font-semibold transition-all shadow-md shadow-[#C0A080]/15 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#8B5CF6] hover:from-[#8B5CF6] hover:to-[#A78BFA] text-white text-xs font-semibold transition-all shadow-lg animate-sanctuary-breathe active:scale-95 cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5 text-[#0A0A0B]" />
+              <Plus className="w-3.5 h-3.5 text-white" />
               <span>Add Memory</span>
             </button>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-[#27272A]/80">
-          <div className="p-3 rounded-xl bg-[#18181B] border border-[#27272A]">
-            <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wider block">Total Memories</span>
-            <span className="text-xl font-bold text-[#F4F4F5]">{memories.length}</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/[0.08]">
+          <div className="p-3 rounded-xl bg-[#161826] border border-white/[0.08]">
+            <span className="text-[10px] text-[#9CA3AF] uppercase tracking-wider block">Total Memories</span>
+            <span className="text-xl font-bold text-[#F9FAFB]">{memories.length}</span>
           </div>
-          <div className="p-3 rounded-xl bg-[#18181B] border border-[#27272A]">
-            <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wider block">Active in Socratic AI</span>
+          <div className="p-3 rounded-xl bg-[#161826] border border-white/[0.08]">
+            <span className="text-[10px] text-[#9CA3AF] uppercase tracking-wider block">Active in Socratic AI</span>
             <span className="text-xl font-bold text-[#34D399]">{activeCount}</span>
           </div>
-          <div className="p-3 rounded-xl bg-[#18181B] border border-[#27272A]">
-            <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wider block">Core Values</span>
+          <div className="p-3 rounded-xl bg-[#161826] border border-white/[0.08]">
+            <span className="text-[10px] text-[#9CA3AF] uppercase tracking-wider block">Core Values</span>
             <span className="text-xl font-bold text-[#F43F5E]">
               {memories.filter((m) => m.category === 'Core Value').length}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-[#18181B] border border-[#27272A]">
-            <span className="text-[10px] text-[#A1A1AA] uppercase tracking-wider block">Patterns & Triggers</span>
+          <div className="p-3 rounded-xl bg-[#161826] border border-white/[0.08]">
+            <span className="text-[10px] text-[#9CA3AF] uppercase tracking-wider block">Patterns & Triggers</span>
             <span className="text-xl font-bold text-[#8B5CF6]">
               {memories.filter((m) => m.category === 'Recurring Pattern' || m.category === 'Emotional Trigger').length}
             </span>
@@ -247,14 +249,14 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
       </div>
 
       {/* Synthesize Memories from Journal Reflection Section */}
-      <div className="p-5 md:p-6 rounded-2xl bg-[#18181B] border border-[#27272A] space-y-4">
+      <div className="p-5 md:p-6 rounded-2xl bg-[#11131C]/80 border border-[#8B5CF6]/20 shadow-xl space-y-4 backdrop-blur-xl animate-gemini-aura">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#C0A080]">
-              <Sparkles className="w-4 h-4 text-[#C0A080]" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#C4B5FD]">
+              <Sparkles className="w-4 h-4 text-[#A78BFA]" />
               <span>Auto-Extract Memories From Recent Reflections</span>
             </div>
-            <p className="text-xs text-[#A1A1AA]">
+            <p className="text-xs text-[#9CA3AF]">
               Have Gemini analyze past journal entries to uncover hidden values, communication tendencies, or repeating themes.
             </p>
           </div>
@@ -263,7 +265,7 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
             <select
               value={selectedReflectionId}
               onChange={(e) => setSelectedReflectionId(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-[#121214] border border-[#27272A] text-xs text-[#F4F4F5] focus:outline-none focus:border-[#C0A080] max-w-[200px] truncate cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-[#161826] border border-white/[0.08] text-xs text-[#F9FAFB] focus:outline-none focus:border-[#8B5CF6] max-w-[200px] truncate cursor-pointer"
             >
               {reflections.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -275,9 +277,9 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
             <button
               onClick={handleExtractMemories}
               disabled={isExtracting || reflections.length === 0}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#27272A] hover:bg-[#3F3F46] text-[#F4F4F5] text-xs font-medium transition-all disabled:opacity-50 cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1E2235] hover:bg-[#282E47] text-[#F9FAFB] border border-white/[0.08] text-xs font-medium transition-all disabled:opacity-50 cursor-pointer shrink-0"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-[#C0A080] ${isExtracting ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-[#A78BFA] ${isExtracting ? 'animate-spin' : ''}`} />
               <span>{isExtracting ? 'Synthesizing...' : 'Synthesize Insights'}</span>
             </button>
           </div>
@@ -285,15 +287,15 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
 
         {/* Candidate Proposals */}
         {extractedCandidates.length > 0 && (
-          <div className="p-4 rounded-xl bg-[#121214] border border-[#C0A080]/30 space-y-3 animate-fadeIn">
+          <div className="p-4 rounded-xl bg-[#161826] border border-[#8B5CF6]/30 space-y-3 animate-fadeIn">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#D4B996]">
-                <Lightbulb className="w-4 h-4 text-[#C0A080]" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#C4B5FD]">
+                <Lightbulb className="w-4 h-4 text-[#A78BFA]" />
                 <span>Found {extractedCandidates.length} New Cognitive Insights</span>
               </div>
               <button
                 onClick={handleAdoptAllCandidates}
-                className="text-xs font-semibold text-[#C0A080] hover:underline cursor-pointer"
+                className="text-xs font-semibold text-[#A78BFA] hover:underline cursor-pointer"
               >
                 Adopt All to Memory
               </button>
@@ -303,7 +305,7 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
               {extractedCandidates.map((cand) => (
                 <div
                   key={cand.id}
-                  className="p-3 rounded-xl bg-[#18181B] border border-[#27272A] space-y-2 flex flex-col justify-between"
+                  className="p-3 rounded-xl bg-[#11131C] border border-white/[0.08] space-y-2 flex flex-col justify-between"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
@@ -316,15 +318,15 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
                       >
                         {cand.category}
                       </span>
-                      <span className="text-[10px] text-[#71717A] font-mono">{cand.confidence}% match</span>
+                      <span className="text-[10px] text-[#6B7280] font-mono">{cand.confidence}% match</span>
                     </div>
-                    <p className="text-xs text-[#F4F4F5] leading-relaxed">{cand.statement}</p>
+                    <p className="text-xs text-[#F9FAFB] leading-relaxed">{cand.statement}</p>
                   </div>
 
                   <div className="pt-2 flex justify-end">
                     <button
                       onClick={() => handleAdoptCandidate(cand)}
-                      className="px-2.5 py-1 rounded-lg bg-[#C0A080] hover:bg-[#D4B996] text-[#0A0A0B] text-[11px] font-semibold transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:from-[#8B5CF6] hover:to-[#818CF8] text-white text-[11px] font-semibold transition-colors cursor-pointer"
                     >
                       Adopt to Memory
                     </button>
@@ -349,8 +351,8 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
                   isSelected
-                    ? 'bg-[#C0A080] text-[#0A0A0B] font-semibold shadow-sm'
-                    : 'bg-[#18181B] text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A] border border-[#27272A]'
+                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#6366F1] text-white font-semibold shadow-md shadow-[#8B5CF6]/20'
+                    : 'bg-[#161826] text-[#9CA3AF] hover:text-[#F9FAFB] hover:bg-[#1E2235] border border-white/[0.08]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -362,30 +364,30 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
 
         {/* Search */}
         <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-[#71717A] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-[#6B7280] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search memories..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#18181B] border border-[#27272A] text-xs text-[#F4F4F5] placeholder-[#71717A] focus:outline-none focus:border-[#C0A080]"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#161826] border border-white/[0.08] text-xs text-[#F9FAFB] placeholder-[#6B7280] focus:outline-none focus:border-[#8B5CF6]"
           />
         </div>
       </div>
 
       {/* Memory Cards Grid */}
       {filteredMemories.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-[#121214] border border-[#27272A] space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#18181B] border border-[#27272A] flex items-center justify-center mx-auto text-[#71717A]">
+        <div className="p-12 text-center rounded-2xl bg-[#11131C]/80 border border-white/[0.08] space-y-3 backdrop-blur-xl">
+          <div className="w-12 h-12 rounded-2xl bg-[#161826] border border-white/[0.08] flex items-center justify-center mx-auto text-[#6B7280]">
             <Brain className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-serif text-[#F4F4F5]">No memories found</h3>
-          <p className="text-xs text-[#A1A1AA] max-w-md mx-auto">
+          <h3 className="text-base font-serif text-[#F9FAFB]">No memories found</h3>
+          <p className="text-xs text-[#9CA3AF] max-w-md mx-auto">
             Extract insights from your reflections above or click "Add Memory" to tell Gemini your personal core values and preferences directly.
           </p>
           <button
             onClick={() => handleOpenAddModal()}
-            className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C0A080] text-[#0A0A0B] text-xs font-semibold transition-all cursor-pointer"
+            className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#6366F1] text-white text-xs font-semibold transition-all cursor-pointer shadow-md shadow-[#8B5CF6]/20"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Create First Memory</span>
@@ -398,10 +400,10 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
             return (
               <div
                 key={mem.id}
-                className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
+                className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 backdrop-blur-xl ${
                   mem.isActive
-                    ? 'bg-[#18181B] border-[#27272A] hover:border-[#3F3F46]'
-                    : 'bg-[#121214] border-[#27272A]/50 opacity-60'
+                    ? 'bg-[#11131C]/80 border-white/[0.08] hover:border-[#8B5CF6]/40'
+                    : 'bg-[#11131C]/40 border-white/[0.04] opacity-60'
                 }`}
               >
                 <div className="space-y-2">
@@ -422,7 +424,7 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
                       className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
                         mem.isActive
                           ? 'bg-[#064E3B]/40 text-[#34D399] border border-[#059669]/40'
-                          : 'bg-[#27272A] text-[#71717A]'
+                          : 'bg-[#161826] border border-white/[0.08] text-[#6B7280]'
                       }`}
                     >
                       {mem.isActive ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -430,13 +432,13 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#F4F4F5] leading-relaxed font-medium">{mem.statement}</p>
+                  <p className="text-xs text-[#F9FAFB] leading-relaxed font-medium">{mem.statement}</p>
                 </div>
 
-                <div className="pt-2 border-t border-[#27272A] flex items-center justify-between text-[11px] text-[#71717A]">
+                <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-[11px] text-[#6B7280]">
                   <div className="flex items-center gap-1.5 truncate max-w-[150px]">
                     {mem.sourceReflectionTitle ? (
-                      <span className="truncate text-[10px] text-[#A1A1AA]" title={mem.sourceReflectionTitle}>
+                      <span className="truncate text-[10px] text-[#9CA3AF]" title={mem.sourceReflectionTitle}>
                         Ref: {mem.sourceReflectionTitle}
                       </span>
                     ) : (
@@ -447,14 +449,14 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => handleOpenAddModal(mem)}
-                      className="p-1 rounded-md text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A] transition-colors cursor-pointer"
+                      className="p-1 rounded-md text-[#9CA3AF] hover:text-[#F9FAFB] hover:bg-[#1E2235] transition-colors cursor-pointer"
                       title="Edit Memory"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => onDeleteMemory(mem.id)}
-                      className="p-1 rounded-md text-[#71717A] hover:text-[#FB7185] hover:bg-[#27272A] transition-colors cursor-pointer"
+                      className="p-1 rounded-md text-[#6B7280] hover:text-[#FB7185] hover:bg-[#1E2235] transition-colors cursor-pointer"
                       title="Delete Memory"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -469,18 +471,18 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
 
       {/* Add / Edit Memory Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
-          <div className="w-full max-w-lg p-6 rounded-2xl bg-[#121214] border border-[#27272A] shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="w-full max-w-lg p-6 rounded-2xl bg-[#11131C] border border-white/[0.08] shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Brain className="w-4 h-4 text-[#C0A080]" />
-                <h3 className="font-semibold text-base text-[#F4F4F5]">
+                <Brain className="w-4 h-4 text-[#A78BFA]" />
+                <h3 className="font-semibold text-base text-[#F9FAFB]">
                   {editingMemory ? 'Edit Memory Insight' : 'Add New Cognitive Memory'}
                 </h3>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-[#71717A] hover:text-[#F4F4F5] text-sm cursor-pointer"
+                className="text-[#6B7280] hover:text-[#F9FAFB] text-sm cursor-pointer"
               >
                 ✕
               </button>
@@ -488,11 +490,11 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
 
             <form onSubmit={handleSaveForm} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#A1A1AA]">Insight Category</label>
+                <label className="text-xs font-semibold text-[#9CA3AF]">Insight Category</label>
                 <select
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value as any)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-[#18181B] border border-[#27272A] text-xs text-[#F4F4F5] focus:outline-none focus:border-[#C0A080] cursor-pointer"
+                  className="w-full px-3.5 py-2 rounded-xl bg-[#161826] border border-white/[0.08] text-xs text-[#F9FAFB] focus:outline-none focus:border-[#8B5CF6] cursor-pointer"
                 >
                   <option value="Core Value">Core Value (Principles & Non-negotiables)</option>
                   <option value="Recurring Pattern">Recurring Pattern (Habits & Tendencies)</option>
@@ -504,14 +506,14 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#A1A1AA]">Memory Statement</label>
+                <label className="text-xs font-semibold text-[#9CA3AF]">Memory Statement</label>
                 <textarea
                   rows={3}
                   value={formStatement}
                   onChange={(e) => setFormStatement(e.target.value)}
                   placeholder="e.g. Needs at least 90 minutes of uninterrupted morning focus for creative output."
                   required
-                  className="w-full px-3.5 py-2 rounded-xl bg-[#18181B] border border-[#27272A] text-xs text-[#F4F4F5] placeholder-[#71717A] focus:outline-none focus:border-[#C0A080]"
+                  className="w-full px-3.5 py-2 rounded-xl bg-[#161826] border border-white/[0.08] text-xs text-[#F9FAFB] placeholder-[#6B7280] focus:outline-none focus:border-[#8B5CF6]"
                 />
               </div>
 
@@ -519,13 +521,13 @@ export const AIMemoryView: React.FC<AIMemoryViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-[#27272A] hover:bg-[#3F3F46] text-[#E4E4E7] text-xs font-medium transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#1E2235] hover:bg-[#282E47] border border-white/[0.08] text-[#E5E7EB] text-xs font-medium transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#C0A080] hover:bg-[#D4B996] text-[#0A0A0B] text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:from-[#8B5CF6] hover:to-[#818CF8] text-white text-xs font-bold transition-all cursor-pointer shadow-md shadow-[#8B5CF6]/20"
                 >
                   {editingMemory ? 'Update Memory' : 'Save Memory'}
                 </button>

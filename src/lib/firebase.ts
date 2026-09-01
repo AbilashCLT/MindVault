@@ -114,11 +114,19 @@ export function stripUndefined<T>(obj: T): T {
 /**
  * Trigger Google Sign In with fallback handling for popup-restricted environments
  */
-export async function loginWithGoogle(): Promise<User | null> {
+export async function loginWithGoogle(): Promise<UserProfile | null> {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    setStoredLocalUser(null); // Clear local guest when real Google user signs in
-    return result.user;
+
+    const profile: UserProfile = {
+      uid: result.user.uid,
+      displayName: result.user.displayName || result.user.email?.split('@')[0] || 'Sanctuary Member',
+      email: result.user.email,
+      photoURL: result.user.photoURL,
+    };
+
+    setStoredLocalUser(profile);
+    return profile;
   } catch (error: any) {
     if (error?.code === 'auth/popup-closed-by-user') {
       return null;
@@ -133,7 +141,7 @@ export async function loginWithGoogle(): Promise<User | null> {
       throw new Error('This domain is not authorized in Firebase Authentication. Please ensure this domain is added to Authorized Domains in the Firebase Console.');
     }
     if (error?.message?.includes('restricted_client') || error?.code === 'auth/restricted-client') {
-      throw new Error("Google OAuth 403 (restricted_client): This Google Cloud OAuth client restricts external accounts. Use 'Continue as Private Guest' to start immediately.");
+      throw new Error("Google OAuth 403 (restricted_client): This Google Cloud OAuth client restricts external accounts. Use 'Enter Private Sanctuary' to start immediately.");
     }
     console.error('Google Sign-In Error:', error);
     throw error;
@@ -570,6 +578,10 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
   autoSaveIntervalSeconds: 3,
   privateModeDefault: false,
   includeMemoryInPrompts: true,
+  notificationEmail: '',
+  enableEmailDigest: true,
+  enableGoalMilestoneAlerts: true,
+  enableBreakthroughAlerts: true,
   updatedAt: Date.now(),
 };
 
