@@ -27,6 +27,8 @@ interface HistorySidebarProps {
   onToggleStar: (entry: ReflectionEntry) => Promise<void>;
   isOpenMobile: boolean;
   onCloseMobile: () => void;
+  onAddSampleJournals?: () => void | Promise<void>;
+  isAddingSamples?: boolean;
 }
 
 export const HistorySidebar: React.FC<HistorySidebarProps> = ({
@@ -38,6 +40,8 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
   onToggleStar,
   isOpenMobile,
   onCloseMobile,
+  onAddSampleJournals,
+  isAddingSamples,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilterMode, setSelectedFilterMode] = useState<string>('all');
@@ -221,14 +225,24 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
         {/* Entries List */}
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {filteredEntries.length === 0 ? (
-            <div className="p-6 text-center text-[#6B7280] space-y-2">
+            <div className="p-6 text-center text-[#6B7280] space-y-3">
               <Sparkles className="w-8 h-8 mx-auto text-[#4B5563] opacity-60" />
               <p className="text-xs font-medium text-[#9CA3AF]">No reflections found</p>
               <p className="text-[11px] text-[#6B7280]">
                 {searchQuery
                   ? 'Try modifying your search or filter criteria'
-                  : 'Start your first mindful sanctuary reflection!'}
+                  : 'Start your first mindful sanctuary reflection or load sample data.'}
               </p>
+              {onAddSampleJournals && (
+                <button
+                  onClick={onAddSampleJournals}
+                  disabled={isAddingSamples}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E1B4B] hover:bg-[#2D286B] border border-[#F59E0B]/40 text-[#FDE68A] hover:text-white text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <Sparkles className="w-3 h-3 text-[#F59E0B]" />
+                  <span>{isAddingSamples ? 'Loading...' : 'Load Sample Journals'}</span>
+                </button>
+              )}
             </div>
           ) : (
             filteredEntries.map((entry) => {

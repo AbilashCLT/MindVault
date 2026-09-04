@@ -15,12 +15,14 @@ interface PatternFinderViewProps {
   entries: ReflectionEntry[];
   onSelectEntry: (entry: ReflectionEntry) => void;
   onStartNewReflection: (mode?: any, prompt?: string) => void;
+  onAddSampleJournals?: () => void | Promise<void>;
 }
 
 export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
   entries,
   onSelectEntry,
   onStartNewReflection,
+  onAddSampleJournals,
 }) => {
   const [patterns, setPatterns] = useState<PatternInsight[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -139,16 +141,27 @@ export const PatternFinderView: React.FC<PatternFinderViewProps> = ({
             </div>
           ))
         ) : (
-          <div className="p-8 rounded-2xl bg-[#11131C]/80 border border-white/[0.08] text-center space-y-3 backdrop-blur-xl">
-            <p className="text-sm text-[#9CA3AF]">
-              Capture at least 2 reflections to generate longitudinal cognitive patterns.
+          <div className="p-8 rounded-2xl bg-[#11131C]/80 border border-white/[0.08] text-center space-y-4 backdrop-blur-xl">
+            <p className="text-sm text-[#9CA3AF] max-w-md mx-auto">
+              Capture at least 2 reflections or load sample data to generate longitudinal cognitive patterns.
             </p>
-            <button
-              onClick={() => onStartNewReflection()}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#8B5CF6] text-white font-semibold text-xs transition-all shadow-md animate-sanctuary-breathe cursor-pointer"
-            >
-              Start New Thought
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={() => onStartNewReflection()}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#8B5CF6] text-white font-semibold text-xs transition-all shadow-md animate-sanctuary-breathe cursor-pointer"
+              >
+                Start New Thought
+              </button>
+              {onAddSampleJournals && (
+                <button
+                  onClick={onAddSampleJournals}
+                  className="px-4 py-2 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#2D286B] border border-[#F59E0B]/40 text-[#FDE68A] hover:text-white font-semibold text-xs transition-colors cursor-pointer shadow-md shadow-[#F59E0B]/10 flex items-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
+                  <span>Load Sample Journals</span>
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
