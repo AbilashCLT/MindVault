@@ -13,7 +13,6 @@ import { DailyPlannerView } from './components/DailyPlannerView';
 import { SettingsPrivacyView } from './components/SettingsPrivacyView';
 import { AIMemoryView } from './components/AIMemoryView';
 import { UserGuideModal } from './components/UserGuideModal';
-import { seedSampleDataForUser } from './lib/sampleJournals';
 import {
   loginWithGoogle,
   loginAsGuest,
@@ -102,8 +101,6 @@ export default function App() {
   const [lastError, setLastError] = useState<string | null>(null);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
   const [isUserGuideOpen, setIsUserGuideOpen] = useState<boolean>(false);
-  const [isAddingSamples, setIsAddingSamples] = useState<boolean>(false);
-  const [sampleToast, setSampleToast] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
   // 1. Unified Auth state listener (Firebase & Local Guest)
@@ -551,29 +548,6 @@ export default function App() {
     }
   };
 
-  // Populate rich sample journals, goals, and AI memory for logged-in user
-  const handleAddSampleJournals = async () => {
-    if (!currentUser?.uid) return;
-    setIsAddingSamples(true);
-    setLastError(null);
-    try {
-      const result = await seedSampleDataForUser(currentUser.uid);
-      setEntries(result.entries);
-      setGoals(result.goals);
-      setMemories(result.memories);
-      if (result.entries.length > 0) {
-        setSelectedEntry(result.entries[0]);
-      }
-      setSampleToast('Successfully added 5 rich sample journals, goals, and AI memory items to your sanctuary!');
-      setTimeout(() => setSampleToast(null), 6000);
-    } catch (err: any) {
-      console.error('Failed to seed sample journals:', err);
-      setLastError('Failed to save sample journals to your vault.');
-    } finally {
-      setIsAddingSamples(false);
-    }
-  };
-
   if (authLoading) {
     return (
       <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center text-[#A1A1AA]">
@@ -621,8 +595,6 @@ export default function App() {
                 onNavigateToView={(view) => setCurrentView(view)}
                 userDisplayName={currentUser.displayName}
                 onOpenGuide={() => setIsUserGuideOpen(true)}
-                onAddSampleJournals={handleAddSampleJournals}
-                isAddingSamples={isAddingSamples}
               />
             </div>
           )}
@@ -642,8 +614,6 @@ export default function App() {
                 onToggleStar={handleToggleStar}
                 isOpenMobile={mobileSidebarOpen}
                 onCloseMobile={() => setMobileSidebarOpen(false)}
-                onAddSampleJournals={handleAddSampleJournals}
-                isAddingSamples={isAddingSamples}
               />
 
               {/* Reflection Workspace */}
@@ -689,7 +659,6 @@ export default function App() {
                   setCurrentView('reflect');
                 }}
                 onStartNewReflection={handleStartNewReflection}
-                onAddSampleJournals={handleAddSampleJournals}
               />
             </div>
           )}
@@ -757,8 +726,6 @@ export default function App() {
                 }}
                 onExportAllData={handleExportAllData}
                 onSignOut={handleSignOut}
-                onAddSampleJournals={handleAddSampleJournals}
-                isAddingSamples={isAddingSamples}
               />
             </div>
           )}
@@ -781,20 +748,6 @@ export default function App() {
             </div>
           )}
         </main>
-      )}
-
-      {/* Floating Sample Toast Notification */}
-      {sampleToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#1E1B4B] border border-[#8B5CF6]/60 text-[#F9FAFB] px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-xl animate-fade-in">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#34D399] animate-pulse" />
-          <p className="text-xs font-medium leading-tight">{sampleToast}</p>
-          <button
-            onClick={() => setSampleToast(null)}
-            className="text-[#9CA3AF] hover:text-[#F9FAFB] text-xs font-bold pl-2 cursor-pointer"
-          >
-            ✕
-          </button>
-        </div>
       )}
 
       {/* Interactive User Guide & Manual Modal */}

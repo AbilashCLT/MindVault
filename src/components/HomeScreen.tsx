@@ -51,8 +51,6 @@ interface HomeScreenProps {
   onNavigateToView: (view: AppView) => void;
   userDisplayName?: string | null;
   onOpenGuide?: () => void;
-  onAddSampleJournals?: () => void | Promise<void>;
-  isAddingSamples?: boolean;
 }
 
 const QUICK_MODES: Array<{
@@ -119,8 +117,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToView,
   userDisplayName,
   onOpenGuide,
-  onAddSampleJournals,
-  isAddingSamples,
 }) => {
   const [digest, setDigest] = useState<AIDigestSummary | null>(null);
   const [isDigestLoading, setIsDigestLoading] = useState(false);
@@ -299,18 +295,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             >
               <BookOpen className="w-4 h-4 text-[#A78BFA]" />
               <span>User Guide</span>
-            </button>
-          )}
-          {onAddSampleJournals && (
-            <button
-              id="home-sample-journals-btn"
-              onClick={onAddSampleJournals}
-              disabled={isAddingSamples}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#1E1B4B]/70 hover:bg-[#2D286B] border border-[#F59E0B]/40 text-[#FDE68A] hover:text-white font-semibold text-sm transition-all shadow-sm shadow-[#F59E0B]/10 hover:border-[#FBBF24] cursor-pointer disabled:opacity-50"
-              title="Populate 5 comprehensive sample reflections under your account"
-            >
-              <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-              <span>{isAddingSamples ? 'Adding Samples...' : 'Add Sample Journals'}</span>
             </button>
           )}
           <button
@@ -788,28 +772,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             })}
           </div>
         ) : (
-          <div className="p-8 rounded-2xl bg-[#11131C]/70 border border-white/[0.08] text-center space-y-4 backdrop-blur-md">
-            <p className="text-sm text-[#9CA3AF] max-w-md mx-auto">
-              Your sanctuary is quiet and private. Start your first reflection or populate sample journals to begin mapping your clarity trajectory.
+          <div className="p-8 rounded-2xl bg-[#11131C]/70 border border-white/[0.08] text-center space-y-3 backdrop-blur-md">
+            <p className="text-sm text-[#9CA3AF]">
+              Your sanctuary is quiet and private. Start your first reflection to begin mapping your clarity trajectory.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button
-                onClick={() => onStartNewReflection()}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#6366F1] text-white font-semibold text-xs hover:from-[#8B5CF6] hover:to-[#818CF8] transition-colors cursor-pointer shadow-md shadow-[#7C3AED]/20"
-              >
-                Start First Thought
-              </button>
-              {onAddSampleJournals && (
-                <button
-                  onClick={onAddSampleJournals}
-                  disabled={isAddingSamples}
-                  className="px-4 py-2 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#2D286B] border border-[#F59E0B]/40 text-[#FDE68A] hover:text-white font-semibold text-xs transition-colors cursor-pointer shadow-md shadow-[#F59E0B]/10 disabled:opacity-50 flex items-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
-                  <span>{isAddingSamples ? 'Adding...' : 'Load Sample Journals'}</span>
-                </button>
-              )}
-            </div>
+            <button
+              onClick={() => onStartNewReflection()}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#6366F1] text-white font-semibold text-xs hover:from-[#8B5CF6] hover:to-[#818CF8] transition-colors cursor-pointer shadow-md shadow-[#7C3AED]/20"
+            >
+              Start First Thought
+            </button>
           </div>
         )}
       </div>

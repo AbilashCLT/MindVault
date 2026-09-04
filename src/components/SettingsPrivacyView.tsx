@@ -39,8 +39,6 @@ interface SettingsPrivacyViewProps {
   onDataPurged: () => void;
   onExportAllData: () => void;
   onSignOut: () => void;
-  onAddSampleJournals?: () => void | Promise<void>;
-  isAddingSamples?: boolean;
 }
 
 export const SettingsPrivacyView: React.FC<SettingsPrivacyViewProps> = ({
@@ -52,8 +50,6 @@ export const SettingsPrivacyView: React.FC<SettingsPrivacyViewProps> = ({
   onDataPurged,
   onExportAllData,
   onSignOut,
-  onAddSampleJournals,
-  isAddingSamples,
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'privacy' | 'account'>('general');
   const [isSaving, setIsSaving] = useState(false);
@@ -698,36 +694,15 @@ export const SettingsPrivacyView: React.FC<SettingsPrivacyViewProps> = ({
               <h3 className="text-sm font-semibold text-[#F9FAFB]">Data Ownership & Portability</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Seed Sample Journals */}
-              <div className="p-4 rounded-xl bg-[#1E1B4B]/40 border border-[#8B5CF6]/30 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-                  <h4 className="text-xs font-semibold text-[#F9FAFB]">Seed Sample Journals</h4>
-                </div>
-                <p className="text-xs text-[#9CA3AF]">
-                  Populate 5 multi-turn Socratic reflections, companion goals, and AI memories to explore full vault capabilities.
-                </p>
-                {onAddSampleJournals && (
-                  <button
-                    onClick={onAddSampleJournals}
-                    disabled={isAddingSamples}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#2D286B] hover:bg-[#373082] text-[#FDE68A] border border-[#F59E0B]/40 text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
-                    <span>{isAddingSamples ? 'Seeding Data...' : 'Populate Sample Data'}</span>
-                  </button>
-                )}
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Export Full Backup */}
               <div className="p-4 rounded-xl bg-[#161826] border border-white/[0.08] space-y-3">
                 <div className="flex items-center gap-2">
                   <Download className="w-4 h-4 text-[#A78BFA]" />
-                  <h4 className="text-xs font-semibold text-[#F9FAFB]">Export Vault Backup</h4>
+                  <h4 className="text-xs font-semibold text-[#F9FAFB]">Export Complete Vault Backup</h4>
                 </div>
                 <p className="text-xs text-[#9CA3AF]">
-                  Download a structured JSON archive containing all reflections, chat messages, goals, plans, and AI memories.
+                  Download a structured JSON archive containing all your reflection entries, chat messages, goals, daily plans, and AI memories.
                 </p>
                 <button
                   onClick={onExportAllData}
@@ -742,10 +717,10 @@ export const SettingsPrivacyView: React.FC<SettingsPrivacyViewProps> = ({
               <div className="p-4 rounded-xl bg-[#2A1418]/40 border border-[#FB7185]/30 space-y-3">
                 <div className="flex items-center gap-2">
                   <Trash2 className="w-4 h-4 text-[#FB7185]" />
-                  <h4 className="text-xs font-semibold text-[#FB7185]">Nuclear Purge (GDPR)</h4>
+                  <h4 className="text-xs font-semibold text-[#FB7185]">Nuclear Purge (Right to be Forgotten)</h4>
                 </div>
                 <p className="text-xs text-[#FCA5A5]/80">
-                  Permanently erases all Firestore collections (/entries, /goals, /daily_plans, /ai_memories, /settings).
+                  Permanently erases all Firestore collections (/entries, /goals, /daily_plans, /ai_memories, /settings) and resets local cache.
                 </p>
                 <button
                   onClick={() => setShowPurgeModal(true)}
