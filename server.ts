@@ -1,14 +1,10 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
@@ -1043,6 +1039,9 @@ app.post('/api/notifications/send-email', async (req: Request, res: Response) =>
     return res.status(500).json({ error: error?.message || 'Failed to dispatch email notification.' });
   }
 });
+
+// Static assets route
+app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
 
 // Setup Vite Development or Production Static Serving
 async function startServer() {
